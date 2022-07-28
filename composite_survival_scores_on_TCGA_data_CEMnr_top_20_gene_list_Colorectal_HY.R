@@ -9,7 +9,7 @@ library(SummarizedExperiment)
 library(stringr)
 library(pensim)
 
-setwd("/Users/hai/Documents/workstation/Test_TCGA/TCGA_metadata")
+setwd("/path/to/your/working/directory/")
 # You can define a list of samples to query and download providing relative TCGA barcodes.
 metadata <- read.csv("Colorectal cancer_TCGA_metadata.csv")
 
@@ -70,15 +70,15 @@ dt_merge <- merge(metadata_count_w_survival,gene_count_matrix,by="sample_id")
 dt_merge <- dt_merge[dt_merge$sample_type == "Primary Tumor",]
 
 #### load gene from file # read all gene list ####
-read_gene_list <- read.csv("CEMnr_gene_list.csv")
+read_gene_list <- read.csv("CD14_CTX_gene_list.csv")
 
 
-CEMnr_gene_list<- read_gene_list[1:20,]$names
+CD14CTX_gene_list<- read_gene_list[1:20,]$names
 
 
 ####  select cluster_id and run this section ####
-cluster_id <- "CEMnr"
-gene_list <- CEMnr_gene_list
+cluster_id <- "CD14CTX"
+gene_list <- CD14CTX_gene_list
 
 
 length(gene_list) # 1000
@@ -231,7 +231,7 @@ print(summary(as.numeric(survival.cat$score)))
 
 
 #### KM plot overall ####
-pdf("Colorectal KM plot on median Composite survival score CEMnr top 20 gene list.pdf")
+pdf("Colorectal KM plot on median Composite survival score CD14CTX top 20 gene list.pdf")
 fit <- npsurv(Surv(OS.time.month,OS) ~ 1, data = surv_merge_info)
 survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 3,y.n.risk = -0.2)
 fit_summary_table <- as.data.frame(summary(fit)$table)
@@ -240,7 +240,7 @@ legend(x=13,y=1,legend=paste0("Median OS: ", round(fit_summary_table[7,1], 2), "
 
 
 #### KM plot overall ####
-pdf("../Graphs/TCGA_metadata/Colorectal KM plot on median Composite survival score CEMnr top 20 gene list.pdf")
+pdf("../Graphs/TCGA_metadata/Colorectal KM plot on median Composite survival score CD14CTX top 20 gene list.pdf")
 fit <- npsurv(Surv(OS.time.month,OS) ~ 1, data = surv_merge_info)
 survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 12,y.n.risk = -0.2)
 fit_summary_table <- as.data.frame(summary(fit)$table)
