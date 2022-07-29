@@ -11,7 +11,7 @@ library(pensim)
 
 setwd("/path/to/your/working/directory/")
 # You can define a list of samples to query and download providing relative TCGA barcodes.
-metadata <- read.csv("Colorectal cancer_TCGA_metadata.csv")
+metadata <- read.csv("./data/Colorectal cancer_TCGA_metadata.csv")
 
 
 listSamples <- unique(metadata$aliquot_id)
@@ -48,7 +48,7 @@ metadata_count$sample_id <- substr(metadata_count$sample_id,1,nchar(metadata_cou
 
 
 # load survival info
-survival_info <- read.csv("coadread_tcga_clinical_data.csv") #,sep = "\t"
+survival_info <- read.csv("./data/coadread_tcga_clinical_data.csv") #,sep = "\t"
 survival_info <- survival_info[,c("Patient.ID", "Sample.ID", "Overall.Survival..Months.", "Overall.Survival.Status")]
 colnames(survival_info) <- c("pat_id", "sample_id",  "OS.time",  "status")
 survival_info$OS <- ifelse(survival_info$status == "1:DECEASED", 2,1)
@@ -70,7 +70,7 @@ dt_merge <- merge(metadata_count_w_survival,gene_count_matrix,by="sample_id")
 dt_merge <- dt_merge[dt_merge$sample_type == "Primary Tumor",]
 
 #### load gene from file # read all gene list ####
-read_gene_list <- read.csv("CD14_CTX_gene_list.csv")
+read_gene_list <- read.csv("./data/CD14CTX_gene_list.csv")
 
 
 CD14CTX_gene_list<- read_gene_list[1:20,]$names
@@ -139,7 +139,7 @@ cph.rt.OS.covariates.cont[,"LHR"] <- exp(cph.rt.OS.covariates.cont[,"Est"]-1.96*
 cph.rt.OS.covariates.cont[,"UHR"] <- exp(cph.rt.OS.covariates.cont[,"Est"]+1.96*cph.rt.OS.covariates.cont[,"sd"])
 
 
-# get the significant gene list from CAMC from survival model using continues value
+# get the significant gene list from CD14CTX from survival model using continues value
 select_gene_list <- rownames(cph.rt.OS.covariates.cont)
 
 #### put all significant gene list into one model ####
@@ -230,17 +230,9 @@ print(paste0("cutpoint: ", round(survival.cutoff$cutpoint[1,1],4)))
 print(summary(as.numeric(survival.cat$score)))
 
 
-#### KM plot overall ####
-pdf("Colorectal KM plot on median Composite survival score CD14CTX top 20 gene list.pdf")
-fit <- npsurv(Surv(OS.time.month,OS) ~ 1, data = surv_merge_info)
-survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 3,y.n.risk = -0.2)
-fit_summary_table <- as.data.frame(summary(fit)$table)
-legend(x=13,y=1,legend=paste0("Median OS: ", round(fit_summary_table[7,1], 2), " months, 95% CI (", round(fit_summary_table[8,1], 2), ", ", round(fit_summary_table[9,1], 2), " ) (n=", nrow(surv_merge_info), ")"),lty=1,bty="n",cex=1) 
-
-
 
 #### KM plot overall ####
-pdf("../Graphs/TCGA_metadata/Colorectal KM plot on median Composite survival score CD14CTX top 20 gene list.pdf")
+pdf("./graph/Colorectal KM plot on median Composite survival score CD14CTX top 20 gene list.pdf")
 fit <- npsurv(Surv(OS.time.month,OS) ~ 1, data = surv_merge_info)
 survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 12,y.n.risk = -0.2)
 fit_summary_table <- as.data.frame(summary(fit)$table)
@@ -288,8 +280,6 @@ survdiff(surv.training~preds.training.dichot)
 legend(x=35,y=0.2,legend=paste0("Log rank p-value = 0.002"),bty="n",cex=1.0)
 legend(x=21,y=0.15,legend=paste0("Median OS for low CS: NR "),col="black",lty="solid",bty="n",cex= 1.0)
 legend(x=21,y=0.1,legend=paste0("Median OS for high CS: ", round(median(fit_summary_table[2,7]), 1), " months"),col="red",lty="dashed",bty="n",cex=1.0)
-
-####
 
 dev.off()
 

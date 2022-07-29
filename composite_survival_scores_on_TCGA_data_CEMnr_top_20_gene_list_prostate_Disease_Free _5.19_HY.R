@@ -11,7 +11,7 @@ library(pensim)
 
 setwd("/path/to/your/working/directory/")
 # You can define a list of samples to query and download providing relative TCGA barcodes.
-metadata <- read.csv("Prostate cancer_TCGA_metadata.csv")
+metadata <- read.csv("./data/Prostate cancer_TCGA_metadata.csv")
 
 listSamples <- unique(metadata$aliquot_id)
 
@@ -44,7 +44,7 @@ metadata_count$sample_id <- substr(metadata_count$sample_id,1,nchar(metadata_cou
 
 
 # load survival info
-survival_info <- read.csv("prad_tcga_clinical_data.csv") 
+survival_info <- read.csv("./data/prad_tcga_clinical_data.csv") 
 survival_info <- survival_info[,c("Patient.ID", "Sample.ID", "Disease.Free..Months.", "Disease.Free.Status","Gleason.score.overall")]
 colnames(survival_info) <- c("pat_id", "sample_id",  "Disease_Free.time",  "status","Gleason_score")
 survival_info <- survival_info[!(is.na(survival_info$Disease_Free.time)),]
@@ -65,7 +65,7 @@ dt_merge <- merge(metadata_count_w_survival,gene_count_matrix,by="sample_id")
 dt_merge <- dt_merge[dt_merge$sample_type == "Primary Tumor",]
 
 #### load gene from file # read all gene list ####
-read_gene_list <- read.csv("CD14_CTX_gene_list.csv")
+read_gene_list <- read.csv("./data/CD14CTX_gene_list.csv")
 
 CD14CTX_gene_list<- read_gene_list[1:20,]$names
 
@@ -164,7 +164,7 @@ surv_merge_info <- cbind(dt_merge[,c("Disease_Free.time.month","Disease_Free","G
 
 
 #### KM plot overall ####
-pdf("../Graphs/TCGA_metadata/Prostate KM plot on median Composite survival score CD14CTX top 20 gene list with DFS.pdf", height = 8, width = 12)
+pdf("./graph/Prostate KM plot on median Composite survival score CD14CTX top 20 gene list with DFS.pdf", height = 8, width = 12)
 fit <- npsurv(Surv(Disease_Free.time.month,Disease_Free) ~ 1, data = surv_merge_info)
 survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 12,y.n.risk = -0.2)
 fit_summary_table <- as.data.frame(summary(fit)$table)

@@ -1,4 +1,4 @@
-# test on top 20 CD14_CTX gene list
+# test on top 20 CD14CTX gene list
 # library(devtools)
 # devtools::install_github(repo = "BioinformaticsFMRP/TCGAbiolinks")
 
@@ -12,7 +12,7 @@ library(pensim)
 setwd("/path/to/your/working/directory/")
 
 # You can define a list of samples to query and download providing relative TCGA barcodes.
-metadata <- read.csv("biliarycancer_metadata.csv")
+metadata <- read.csv("./data/biliarycancer_metadata.csv")
 listSamples <- unique(metadata$sample_id)
 
 # Query platform Illumina HiSeq with a list of barcode 
@@ -44,7 +44,7 @@ metadata_count <- metadata[count_info_index, ]
 dim(metadata_count) # 36 23
 
 # load survival info
-survival_info <- read.csv("TCGA-CHOL.survival.csv") #,sep = "\t"
+survival_info <- read.csv("./data/TCGA-CHOL.survival.csv") #,sep = "\t"
 colnames(survival_info) <- c("sample_id",    "OS",        "X_PATIENT", "OS.time"  )
 metadata_count_w_survival <- merge(metadata_count,survival_info,by="sample_id")
 dim(metadata_count_w_survival)
@@ -66,7 +66,7 @@ dt_merge <- dt_merge[dt_merge$sample_type == "Primary Tumor",]
 dim(dt_merge)
 
 ### load gene from file # read all gene list ####
-read_gene_list <- read.csv("CD14_CTX_gene_list.csv")
+read_gene_list <- read.csv("./data/CD14CTX_gene_list.csv")
 
 CD14CDTX_top_gene_list <- head(read_gene_list$names, n=20)
 
@@ -127,7 +127,7 @@ surv_merge_info <- cbind(dt_merge[,c("OS.time.month","OS")], count_info_table)
 
 
 #### KM plot over all ####
-pdf("../Graphs/TCGA_metadata/Biliary KM plot on median Composite survival score CEMnr top 20 gene list plot.pdf")
+pdf("./graph/Biliary KM plot on median Composite survival score CD14CTX top 20 gene list plot.pdf")
 
 fit <- npsurv(Surv(OS.time.month,OS) ~ 1, data = surv_merge_info)
 survplot(fit,n.risk=TRUE,xlab="", lwd=2,main="Overall Survival",conf='bands',time.inc = 3,y.n.risk = -0.2)
