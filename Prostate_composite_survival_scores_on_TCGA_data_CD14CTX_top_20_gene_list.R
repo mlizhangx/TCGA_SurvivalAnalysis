@@ -8,7 +8,7 @@ library(SummarizedExperiment)
 library(stringr)
 library(pensim)
 
-setwd("/Users/hai/Documents/workstation/Test_TCGA/CD14RvNR_CD4_1_vsall/TCGA_SurvivalAnalysis_Github")
+# setwd("/path/to/your/working/directory/")
 
 
 metadata <- read.csv("./data/Prostate cancer_TCGA_metadata.csv")
